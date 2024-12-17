@@ -11,7 +11,7 @@ typedef struct {
     char* type;// item'in türü
     int damage;
     int defense;
-    int durability;//dayanıklılık
+    int durability;//itemin dayanıklılığı
 }Item;
 typedef struct {
     int health;
@@ -19,11 +19,11 @@ typedef struct {
     Item** inventory;//eşyaları tutacak olan dinamik array
     int inventoryCapacity;
     int inventorySize;
-    int level;//Yaratik kestik�e level atlama sistemi level atlayinca da inventoryCapacity artacak o y�zden inventory arrayini dinamik yaptim
+    int level;//Yaratik kestikçe level atlama sistemi level atlayinca da inventoryCapacity artacak o yüzden inventory arrayini dinamik yaptim
      int coin; //Default olarak her player coin'e sahip olur ve yaratık kestikçe veya savaş kazandıkça coin kazanır ve satış mağazasına gidip item alabilir
 }Player;
 
-// Forward declaration varsa ve Room pointer kullanıyorsanız:
+// Room* north falan için
 struct Room;
 
 // Ancak `Room` yapısını tam olarak kullanan bir fonksiyon veya struct'ta, tam tanımlama gerekli.
@@ -40,13 +40,12 @@ typedef struct Room {
 } Room;
 
 typedef struct {
-    char* name;//yaratığın  adı
-    int health;//yaratığın canı
-    int strength;//yaratığın gücü
+    char* name;
+    int health;
+    int strength;
 } Creature;
 
-//benim istediğim şey farklı türde yaratıklar olsun herbirinin statları farklı olsun tekdüze olmasın diye bunu istiyorum 
-//ve karakterimiz level atladıkça bazılarını yenebilsin yani herkesi kesebilecek şekilde olmasın
+//Fonksiyon protoplerini vermem lazımdı Çünkü tek sayfada yaptığım için sonradan kullandığım veya sonradan aklıma gelen değişikliklerden dolayı error almamak için fonksiyon yazdıkça prototipini buraya oluşturdum
 void addItemToRoom(Room* room, Item* item);
 void dropItem(Player* player, const char* itemName);
 void freeItem(Item* item);
@@ -78,7 +77,8 @@ Item* createItem(const char* name, int bonusHealth, int bonusStrength, const cha
     item->durability = durability;
     return item;
 }
-
+//benim istediğim şey farklı türde yaratıklar olsun herbirinin statları farklı olsun tekdüze olmasın diye bunu istiyorum 
+//ve karakterimiz level atladıkça bazılarını yenebilsin  yani herkesi kesebilecek şekilde olmasın o yüzden boss'u güçlü yapmak lazım
 Creature* createCreature(const char* creatureType) {
     // 0: Goblin, 1: Orc, 2: Dragon
     Creature* creature = malloc(sizeof(Creature));
@@ -115,11 +115,11 @@ Creature* createCreature(const char* creatureType) {
     return creature;
 }
 Creature* randomCreateCreature() {
-    // Oluşturmak istediğiniz yaratık türleri:
+    
     const char* creatureTypes[] = { "goblin", "orc", "dragon", "minnion", "boss" };
     int numTypes = 5;
 
-    // Rastgele bir indeks seç
+    //random gelsin diye rand() kullandık
     int randomIndex = rand() % numTypes;
 
     // Seçilen tipe göre yaratık oluştur
@@ -413,7 +413,7 @@ void fight(Player* player, Creature* creature,int isTraining) {
             continue;
         }
 
-        if (creature->health > 0) { // Yaratık saldırır
+        if (creature->health > 0) { // Yaratık saldırma
             player->health -= creature->strength;
             printf("%s size saldırdı! Kalan sağlığınız: %d\n", creature->name, player->health);
         }
@@ -476,10 +476,10 @@ void loadGame(Player* player, const char* filename) {
         char name[50], type[20];
         int bonusHealth, bonusStrength, damage, defense, durability;
         fscanf(file, "%s %d %d %s %d %d %d\n",
-            name,  // 'name' için boyut bilgisi
+            name,  
             &bonusHealth,
             &bonusStrength,
-            type, // 'type' için boyut bilgisi
+            type, 
             &damage,
             &defense,
             &durability);
@@ -579,7 +579,7 @@ void startTournament(Player* player) {
     printf("Seviye atladınız! Yeni seviye: %d\n", player->level);
     
 }
-// Market odası menüsünde case 1 (Eşya Satın Al) için fonksiyon:
+// Market odası menüsünde case 1 (Eşya Satın Al) için fonksiyon yaz
 void buyItemFromMarket(Player* player, Room* marketRoom) {
     if (marketRoom->itemCount == 0) {
         printf("Markette hiç eşya yok!\n");
@@ -589,7 +589,7 @@ void buyItemFromMarket(Player* player, Room* marketRoom) {
     // Market eşyalarını ve fiyatlarını göster:
     // Altın Kılıç: index 0, fiyat 50
     // Demir Zırh: index 1, fiyat 80
-    // Bu örnekte marketteki 2 eşya olduğunu varsayıyoruz, marketItemPrices dizisini global tanımladığınızı varsayalım.
+
     int marketItemPrices[2] = { 50, 80 };
 
     printf("Market Eşyaları:\n");
